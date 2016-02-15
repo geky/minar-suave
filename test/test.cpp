@@ -67,5 +67,12 @@ void app_start(int, char **) {
     minar::call_every_nonreentrant(2750, [](){ led3 = !led3; });
     minar::call_every_nonreentrant(3000, test4, 0, 1, 2, 3);
     minar::call_every_nonreentrant(3250, &Test5::test5, &t5, 0, 1, 2, 3);
+
+
+    minar::handle_t h1 = minar::call_every(1000, test1);
+    minar::handle_t h2 = minar::call_every_nonreentrant(1000, test1);
+
+    minar::cancel(h1);
+    minar::cancel(h2);
 }
 

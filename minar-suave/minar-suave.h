@@ -6,6 +6,15 @@
 
 namespace minar {
 
+
+// Easy access to cancelling callbacks
+using handle_t = callback_handle_t;
+
+void cancel(handle_t handle) {
+    Scheduler::cancelCallback(handle);
+}
+
+
 // Posting from non-irq contexts
 // memory allocations!
 void _thunk(std::function<void()> f) { f(); }
@@ -17,22 +26,25 @@ Scheduler::CallbackAdder post(F f, As... args) {
 }
 
 template <typename... Ts>
-void call(Ts... ts) {
-    post(ts...);
+handle_t call(Ts... ts) {
+    return post(ts...)
+        .getHandle();
 }
 
 template <typename... Ts>
-void call_in(unsigned ms, Ts... ts) {
-    post(ts...)
+handle_t call_in(unsigned ms, Ts... ts) {
+    return post(ts...)
         .delay(milliseconds(ms))
-        .tolerance(0);
+        .tolerance(0)
+        .getHandle();
 }
 
 template <typename... Ts>
-void call_every(unsigned ms, Ts... ts) {
-    post(ts...)
+handle_t call_every(unsigned ms, Ts... ts) {
+    return post(ts...)
         .period(milliseconds(ms))
-        .tolerance(0);
+        .tolerance(0)
+        .getHandle();
 }
 
 
@@ -46,23 +58,27 @@ static Scheduler::CallbackAdder post_nonreentrant(F f, As... args) {
 }
         
 template <typename... Ts>
-static void call_nonreentrant(Ts... ts) {
-    post(ts...);
+static handle_t call_nonreentrant(Ts... ts) {
+    return post(ts...)
+        .getHandle();
 }
 
 template <typename... Ts>
-static void call_in_nonreentrant(unsigned ms, Ts... ts) {
-    post(ts...)
+static handle_t call_in_nonreentrant(unsigned ms, Ts... ts) {
+    return post(ts...)
         .delay(milliseconds(ms))
-        .tolerance(0);
+        .tolerance(0)
+        .getHandle();
 }
 
 template <typename... Ts>
-static void call_every_nonreentrant(unsigned ms, Ts... ts) {
-    post(ts...)
+static handle_t call_every_nonreentrant(unsigned ms, Ts... ts) {
+    return post(ts...)
         .period(milliseconds(ms))
-        .tolerance(0);
+        .tolerance(0)
+        .getHandle();
 }
+
 
 }
 
