@@ -50,31 +50,9 @@ void app_start(int, char **) {
     minar::call_every(1000, test4, 0, 1, 2, 3);
     minar::call_every(1250, &Test5::test5, &t5, 0, 1, 2, 3);
 
-    minar::call_nonreentrant(test1);
-    minar::call_nonreentrant(&Test2::test2, &t2);
-    minar::call_nonreentrant([](){ led3 = !led3; });
-    minar::call_nonreentrant(test4, 0, 1, 2, 3);
-    minar::call_nonreentrant(&Test5::test5, &t5, 0, 1, 2, 3);
-
-    minar::call_in_nonreentrant(2250, test1);
-    minar::call_in_nonreentrant(2500, &Test2::test2, &t2);
-    minar::call_in_nonreentrant(2750, [](){ led3 = !led3; });
-    minar::call_in_nonreentrant(3000, test4, 0, 1, 2, 3);
-    minar::call_in_nonreentrant(3250, &Test5::test5, &t5, 0, 1, 2, 3);
-
-    minar::call_every_nonreentrant(2250, test1);
-    minar::call_every_nonreentrant(2500, &Test2::test2, &t2);
-    minar::call_every_nonreentrant(2750, [](){ led3 = !led3; });
-    minar::call_every_nonreentrant(3000, test4, 0, 1, 2, 3);
-    minar::call_every_nonreentrant(3250, &Test5::test5, &t5, 0, 1, 2, 3);
-
     minar::call_every(1000, printf, "Hello world!\r\n");
 
-
-    minar::handle_t h1 = minar::call_every(1000, test1);
-    minar::handle_t h2 = minar::call_every_nonreentrant(1000, test1);
-
-    minar::cancel(h1);
-    minar::cancel(h2);
+    minar::handle_t handle = minar::call_every(500, printf, "Oops!\r\n");
+    minar::cancel(handle);
 }
 

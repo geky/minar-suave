@@ -48,38 +48,6 @@ handle_t call_every(unsigned ms, Ts... ts) {
 }
 
 
-// Posting from irq contexts
-// nonreentrant!
-template <typename F, typename... As>
-static Scheduler::CallbackAdder post_nonreentrant(F f, As... args) {
-    static auto cb = [=]() { std::bind(f, args...)(); };
-    return Scheduler::postCallback(
-        &cb, (void (decltype(cb)::*)())&decltype(cb)::operator());
-}
-        
-template <typename... Ts>
-static handle_t call_nonreentrant(Ts... ts) {
-    return post(ts...)
-        .getHandle();
-}
-
-template <typename... Ts>
-static handle_t call_in_nonreentrant(unsigned ms, Ts... ts) {
-    return post(ts...)
-        .delay(milliseconds(ms))
-        .tolerance(0)
-        .getHandle();
-}
-
-template <typename... Ts>
-static handle_t call_every_nonreentrant(unsigned ms, Ts... ts) {
-    return post(ts...)
-        .period(milliseconds(ms))
-        .tolerance(0)
-        .getHandle();
-}
-
-
 }
 
 #endif

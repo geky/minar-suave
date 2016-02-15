@@ -62,17 +62,6 @@ minar::cancel(handle);
 
 ## IRQ issues
 
-Unfortunately, the flexibility of minar-suave comes at the cost of memory allocations. This makes the call functions unsafe in interrupt contexts.
+Unfortunately, the flexibility of minar-suave comes at the cost of memory allocations at the bind site. This makes the call functions unsafe in interrupt contexts.
 
-As a workaround, minar-suave provides nonreentrant functions that use statically allocated space to store the callback.
-```
-void uart_recv_irq(const char *data, size_t size) {
-    minar::call_nonreentrant([=]() {
-        printf("recv %d\n", size);
-        handle(data, size);
-    }
-}
-```
-
-If a more powerful interface is needed, you should probably just be using [minar](https://github.com/ARMmbed/minar) directly.
-
+If you need to post to minar in an interrupt context, you should use [minar](https://github.com/ARMmbed/minar) directly.
