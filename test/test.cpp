@@ -3,7 +3,7 @@
 
 #include "mbed-drivers/mbed.h"
 
-DigitalOut led1(LED_RED);
+DigitalOut led1(LED1);
 DigitalOut led2(LED_GREEN);
 DigitalOut led3(LED_BLUE);
 
@@ -67,6 +67,8 @@ void app_start(int, char **) {
     minar::call_every_nonreentrant(2750, [](){ led3 = !led3; });
     minar::call_every_nonreentrant(3000, test4, 0, 1, 2, 3);
     minar::call_every_nonreentrant(3250, &Test5::test5, &t5, 0, 1, 2, 3);
+
+    minar::call_every(1000, printf, "Hello world!\r\n");
 
 
     minar::handle_t h1 = minar::call_every(1000, test1);
