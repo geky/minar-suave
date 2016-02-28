@@ -1,5 +1,6 @@
 {
   "name": "minar-suave",
+  "description": "A minar for a simpler sort of programmer",
   "version": "1.0.0",
   "keywords": [],
   "author": "Christopher Haster <chaster@utexas.edu>",

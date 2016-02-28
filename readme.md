@@ -18,12 +18,22 @@ void app_start(int, char **) {
 }
 ```
 
-minar-suave simply adds several functions to the minar namespace
-- `call(function)` - Execute the callback as soon as possible.
-- `call_in(milliseconds, function)` - Execute the callback after the specified time
-- `call_every(milliseconds, function)` - Execute the callback periodically
+minar-suave simply adds several functions to the minar namespace:
+``` cpp
+// Execute the callback as soon as possible
+minar::call(func);
 
-minar-suave can handle any arguments accepted by [std::bind](http://en.cppreference.com/w/cpp/utility/functional/bind). This provides many possibilities for callbacks.
+// Execute the callback after a specified time in milliseconds
+minar::call_in(1000, func);
+
+// Execute the callback periodically in milliseconds
+minar::call_every(1000, func);
+
+// Execute the callback on an external event
+minar::call_on(&button, &InterruptIn::rise, func);
+```
+
+minar-suave can handle any arguments accepted by [std::bind](http://en.cppreference.com/w/cpp/utility/functional/bind). This provides many possibilities for callbacks:
 ``` cpp
 // Basic functions
 void func() {
@@ -54,8 +64,8 @@ minar::call(printf, "Hi!\n");
 
 ```
 
-minar-suave also supports canceling callbacks.
-```
+minar-suave also supports canceling callbacks:
+``` cpp
 minar::handle_t handle = minar::call_in(10000, printf, "oops");
 minar::cancel(handle);
 ```
