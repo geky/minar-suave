@@ -7,6 +7,9 @@ DigitalOut led1(LED1);
 DigitalOut led2(LED_GREEN);
 DigitalOut led3(LED_BLUE);
 
+InterruptIn b1(SW2);
+
+
 void test1() {
     led1 = !led1;
 }
@@ -51,6 +54,12 @@ void app_start(int, char **) {
     minar::call_every(1250, &Test5::test5, &t5, 0, 1, 2, 3);
 
     minar::call_every(1000, printf, "Hello world!\r\n");
+
+    minar::call_on(&b1, &InterruptIn::rise, test1);
+    minar::call_on(&b1, &InterruptIn::rise, &Test2::test2, &t2);
+    minar::call_on(&b1, &InterruptIn::rise, [](){ led3 = !led3; });
+    minar::call_on(&b1, &InterruptIn::rise, test4, 0, 1, 2, 3);
+    minar::call_on(&b1, &InterruptIn::rise, &Test5::test5, &t5, 0, 1, 2, 3);
 
     minar::handle_t handle = minar::call_every(500, printf, "Oops!\r\n");
     minar::cancel(handle);
