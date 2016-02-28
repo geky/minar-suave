@@ -49,11 +49,10 @@ handle_t call_every(unsigned ms, F f, As... args) {
 
 template <typename E, typename F, typename... As>
 handle_t call_on(E event, F f, As... args) {
-    std::function<void()> *stored = new std::function<void()>(
-            [=]() { std::bind(f, args...)(); });
-    CThunk<std::function<void()>> *thunk = new CThunk<std::function<void()>>(
-        stored, (void (std::function<void()>::*)())
-            &std::function<void()>::operator());
+    auto bound = std::bind(f, args...);
+    auto *stored = new std::function<void()>([=]() { bound(); });
+    auto *thunk = new CThunk<std::function<void()>>(stored,
+        (void (std::function<void()>::*)())&std::function<void()>::operator());
 
     event((CThunkEntry)thunk->entry());
 
