@@ -19,10 +19,10 @@ bool cancel(handle_t handle);
 // memory allocations!
 template <typename F, typename... As>
 Scheduler::CallbackAdder post(F f, As... args) {
-    auto bound = std::bind(f, args...);
     return Scheduler::postCallback(
-        mbed::util::FunctionPointer1<void, decltype(bound)>(
-            [](decltype(bound) f){ f(); }).bind(bound));
+        mbed::util::FunctionPointer1<void, std::function<void()>>(
+            [](std::function<void()> f){ f(); }).bind(
+                std::bind(f, args...)));
 }
 
 template <typename F, typename... As>
@@ -49,10 +49,11 @@ handle_t call_every(unsigned ms, F f, As... args) {
 
 template <typename E, typename F, typename... As>
 handle_t call_on(E event, F f, As... args) {
-    auto bound = [=]() { std::bind(f, args...)(); };
-    decltype(bound) *stored = new decltype(bound)(bound);
-    CThunk<decltype(bound)> *thunk = new CThunk<decltype(bound)>(stored, 
-            (void (decltype(bound)::*)())&decltype(bound)::operator());
+    std::function<void()> *stored = new std::function<void()>(
+            [=]() { std::bind(f, args...)(); });
+    CThunk<std::function<void()>> *thunk = new CThunk<std::function<void()>>(
+        stored, (void (std::function<void()>::*)())
+            &std::function<void()>::operator());
 
     event((CThunkEntry)thunk->entry());
 
