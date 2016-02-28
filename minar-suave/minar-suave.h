@@ -17,12 +17,12 @@ void cancel(handle_t handle) {
 
 // Posting from non-irq contexts
 // memory allocations!
-void _thunk(std::function<void()> f) { f(); }
 template <typename F, typename... As>
 Scheduler::CallbackAdder post(F f, As... args) {
+    auto bound = std::bind(f, args...);
     return Scheduler::postCallback(
-        mbed::util::FunctionPointer1<void, std::function<void()>>(
-            _thunk).bind(std::bind(f, args...)));
+        mbed::util::FunctionPointer1<void, decltype(bound)>(
+            [](decltype(bound) f){ f(); }).bind(bound));
 }
 
 template <typename... Ts>
