@@ -25,23 +25,23 @@ Scheduler::CallbackAdder post(F f, As... args) {
             [](decltype(bound) f){ f(); }).bind(bound));
 }
 
-template <typename... Ts>
-handle_t call(Ts... ts) {
-    return post(ts...)
+template <typename F, typename... As>
+handle_t call(F f, As... args) {
+    return post(f, args...)
         .getHandle();
 }
 
-template <typename... Ts>
-handle_t call_in(unsigned ms, Ts... ts) {
-    return post(ts...)
+template <typename F, typename... As>
+handle_t call_in(unsigned ms, F f, As... args) {
+    return post(f, args...)
         .delay(milliseconds(ms))
         .tolerance(0)
         .getHandle();
 }
 
-template <typename... Ts>
-handle_t call_every(unsigned ms, Ts... ts) {
-    return post(ts...)
+template <typename F, typename... As>
+handle_t call_every(unsigned ms, F f, As... args) {
+    return post(f, args...)
         .period(milliseconds(ms))
         .tolerance(0)
         .getHandle();
