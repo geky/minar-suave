@@ -5,6 +5,10 @@
   "keywords": [],
   "author": "Christopher Haster <chaster@utexas.edu>",
   "license": "Apache-2.0",
+  "repository": {
+    "url": "git@github.com:geky/minar-suave.git",
+    "type": "git"
+  },
   "dependencies": {
     "minar": "^1.0.4"
   }
