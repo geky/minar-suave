@@ -70,8 +70,13 @@ minar::handle_t handle = minar::call_in(10000, printf, "oops");
 minar::cancel(handle);
 ```
 
-## IRQ issues
+## Issues
 
-Unfortunately, the flexibility of minar-suave comes at the cost of memory allocations at the bind site. This makes the call functions unsafe in interrupt contexts.
+- If non-trivial bind arguments are used, minar-suave may perform memory
+  allocations at the bind site. This can be problematic in interrupt contexts.
 
-If you need to post to minar in an interrupt context, you should use [minar](https://github.com/ARMmbed/minar) directly.
+- minar-suave uses several features of C++11 including std::function and
+  variadic templates. This can prevent compilation on non-compliant compilers.
+
+If these issues are problematic, you should probably just be using 
+[minar](https://github.com/ARMmbed/minar) directly.
