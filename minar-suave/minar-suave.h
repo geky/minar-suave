@@ -21,8 +21,7 @@ template <typename F, typename... As>
 Scheduler::CallbackAdder post(F f, As... args) {
     return Scheduler::postCallback(
         mbed::util::FunctionPointer1<void, std::function<void()>>(
-            [](std::function<void()> f){ f(); }).bind(
-                std::bind(f, args...)));
+            [](std::function<void()> f){ f(); }).bind(std::bind(f, args...)));
 }
 
 template <typename F, typename... As>
@@ -49,12 +48,14 @@ handle_t call_every(unsigned ms, F f, As... args) {
 
 template <typename E, typename F, typename... As>
 handle_t call_on(E event, F f, As... args) {
-    auto bound = std::bind(f, args...);
-    auto *stored = new std::function<void()>([=]() { bound(); });
+    auto callback = mbed::util::FunctionPointer1<void, std::function<void()>>(
+        [](std::function<void()> f){ f(); }).bind(std::bind(f, args...));
+    auto *stored = new std::function<void()>(
+        [=]() { Scheduler::postCallback(callback); });
     auto *thunk = new CThunk<std::function<void()>>(stored,
         (void (std::function<void()>::*)())&std::function<void()>::operator());
 
-    event((CThunkEntry)thunk->entry());
+    event((void (*)())thunk->entry());
 
     return handle([=]() {
         event(0);
